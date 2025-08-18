@@ -9,7 +9,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from app.infrastructure.database.models import Base
-from app.infrastructure.database.models import UserModel, ProductModel, HotelModel
+from app.infrastructure.database.models import UserModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

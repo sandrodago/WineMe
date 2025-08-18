@@ -39,42 +39,4 @@ def delete_user(db: Session, user_id: int) -> bool:
         db.delete(db_user)
         db.commit()
         return True
-    return False
-
-# Product CRUD operations
-def get_product(db: Session, product_id: int) -> Optional[models.Product]:
-    return db.query(models.Product).filter(models.Product.id == product_id).first()
-
-def get_products(db: Session, skip: int = 0, limit: int = 100, category: Optional[str] = None) -> List[models.Product]:
-    query = db.query(models.Product)
-    if category is not None:
-        query = query.filter(models.Product.category == category)
-    return query.offset(skip).limit(limit).all()
-
-def get_active_products(db: Session, skip: int = 0, limit: int = 100) -> List[models.Product]:
-    return db.query(models.Product).filter(models.Product.is_active == True).offset(skip).limit(limit).all()
-
-def create_product(db: Session, product: schemas.ProductCreate) -> models.Product:
-    db_product = models.Product(**product.dict())
-    db.add(db_product)
-    db.commit()
-    db.refresh(db_product)
-    return db_product
-
-def update_product(db: Session, product_id: int, product_update: schemas.ProductUpdate) -> Optional[models.Product]:
-    db_product = get_product(db, product_id)
-    if db_product:
-        update_data = product_update.dict(exclude_unset=True)
-        for field, value in update_data.items():
-            setattr(db_product, field, value)
-        db.commit()
-        db.refresh(db_product)
-    return db_product
-
-def delete_product(db: Session, product_id: int) -> bool:
-    db_product = get_product(db, product_id)
-    if db_product:
-        db.delete(db_product)
-        db.commit()
-        return True
     return False 
