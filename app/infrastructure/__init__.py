@@ -1,0 +1,1 @@
+# Infrastructure Layer - Database, external services, etc. 

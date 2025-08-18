@@ -1,0 +1,1 @@
+# Domain modules - each resource is its own domain 
