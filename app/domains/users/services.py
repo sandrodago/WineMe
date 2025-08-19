@@ -8,7 +8,7 @@ class UserService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
     
-    def create_user(self, email: str, username: str, full_name: Optional[str] = None) -> User:
+    def create_user(self, email: str, username: str, password: str, full_name: Optional[str] = None) -> User:
         """Create a new user with business rules"""
         # Create value objects
         email_vo = Email(email)
@@ -25,6 +25,7 @@ class UserService:
         user = User(
             email=email_vo,
             username=username_vo,
+            password=password,
             full_name=full_name
         )
         
@@ -42,12 +43,12 @@ class UserService:
         """Get all users with pagination"""
         return self.user_repository.get_all(skip=skip, limit=limit)
     
-    def update_user(self, user_id: int, full_name: Optional[str] = None, is_active: Optional[bool] = None) -> User:
+    def update_user(self, user_id: int, full_name: Optional[str] = None, password: Optional[str] = None, is_active: Optional[bool] = None) -> User:
         """Update user with business logic"""
         user = self.get_user_by_id(user_id)
         
-        if full_name is not None:
-            user.update_profile(full_name)
+        if full_name is not None or password is not None:
+            user.update_profile(full_name=full_name, password=password)
         
         if is_active is not None:
             if is_active:

@@ -45,6 +45,7 @@ class User:
     
     email: Email
     username: Username
+    password: str
     full_name: Optional[str] = None
     is_active: bool = True
     id: Optional[int] = None
@@ -67,10 +68,12 @@ class User:
             self.is_active = False
             self.updated_at = datetime.utcnow()
     
-    def update_profile(self, full_name: Optional[str] = None) -> None:
+    def update_profile(self, full_name: Optional[str] = None, password: Optional[str] = None) -> None:
         """Update user profile information"""
         if full_name is not None:
             self.full_name = full_name
+        if password is not None:
+            self.password = password
         self.updated_at = datetime.utcnow()
     
     def can_login(self) -> bool:

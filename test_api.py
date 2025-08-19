@@ -22,6 +22,7 @@ def test_create_user():
     user_data = {
         "email": "test@example.com",
         "username": "testuser",
+        "password": "securepassword123",
         "full_name": "Test User"
     }
     response = requests.post(f"{BASE_URL}/users/", json=user_data)
