@@ -32,6 +32,7 @@ def create_user(
         dto = CreateUserDTO(
             email=user_request.email,
             username=user_request.username,
+            password=user_request.password,
             full_name=user_request.full_name
         )
         result = use_case.execute(dto)
@@ -80,6 +81,7 @@ def update_user(
         use_case = UpdateUserUseCase(user_service)
         dto = UpdateUserDTO(
             full_name=user_request.full_name,
+            password=user_request.password,
             is_active=user_request.is_active
         )
         result = use_case.execute(user_id, dto)

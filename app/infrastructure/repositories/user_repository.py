@@ -15,6 +15,7 @@ class SQLAlchemyUserRepository(UserRepository):
         db_user = UserModel(
             email=user.email.value,
             username=user.username.value,
+            password=user.password,
             full_name=user.full_name,
             is_active=user.is_active,
             created_at=user.created_at,
@@ -54,6 +55,7 @@ class SQLAlchemyUserRepository(UserRepository):
             # Update the SQLAlchemy model attributes
             db_user.email = user.email.value
             db_user.username = user.username.value
+            db_user.password = user.password
             db_user.full_name = user.full_name
             db_user.is_active = user.is_active
             db_user.updated_at = user.updated_at
@@ -85,6 +87,7 @@ class SQLAlchemyUserRepository(UserRepository):
             id=db_user.id,
             email=Email(db_user.email),
             username=Username(db_user.username),
+            password=db_user.password,
             full_name=db_user.full_name,
             is_active=db_user.is_active,
             created_at=db_user.created_at,

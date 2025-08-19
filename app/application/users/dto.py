@@ -7,12 +7,14 @@ class CreateUserRequest:
     """DTO for creating a user"""
     email: str
     username: str
+    password: str
     full_name: Optional[str] = None
 
 @dataclass
 class UpdateUserRequest:
     """DTO for updating a user"""
     full_name: Optional[str] = None
+    password: Optional[str] = None
     is_active: Optional[bool] = None
 
 @dataclass

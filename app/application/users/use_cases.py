@@ -15,6 +15,7 @@ class CreateUserUseCase:
             user = self.user_service.create_user(
                 email=request.email,
                 username=request.username,
+                password=request.password,
                 full_name=request.full_name
             )
             return self._to_response(user)
@@ -94,6 +95,7 @@ class UpdateUserUseCase:
             user = self.user_service.update_user(
                 user_id=user_id,
                 full_name=request.full_name,
+                password=request.password,
                 is_active=request.is_active
             )
             return self._to_response(user)
