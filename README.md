@@ -18,22 +18,30 @@ This project follows **Domain Driven Design (DDD)** with a clean, layered archit
 ```
 app/
 ├── domains/                    # Domain Layer
-│   └── users/                 # Users Domain
-│       ├── domain.py          # Entities, Value Objects, Domain Logic
+│   ├── users/                 # Users Domain
+│   │   ├── domain.py          # Entities, Value Objects, Domain Logic
+│   │   ├── repository.py      # Repository Interface
+│   │   └── services.py        # Domain Services
+│   └── wines/                 # Wines Domain
+│       ├── domain.py          # Wine Entity
 │       ├── repository.py      # Repository Interface
 │       └── services.py        # Domain Services
 │
 ├── application/               # Application Layer
-│   └── users/
-│       ├── dto.py            # Data Transfer Objects
-│       └── use_cases.py      # Use Cases
+│   ├── users/
+│   │   ├── dto.py            # Data Transfer Objects
+│   │   └── use_cases.py      # Use Cases
+│   └── wines/
+│       ├── dto.py            # Wine DTOs
+│       └── use_cases.py      # Wine Use Cases
 │
 ├── infrastructure/            # Infrastructure Layer
 │   ├── database/
 │   │   ├── connection.py     # Database Connection
 │   │   └── models.py         # SQLAlchemy Models
 │   └── repositories/
-│       └── user_repository.py # Repository Implementation
+│       ├── user_repository.py # Repository Implementation
+│       └── wine_repository.py # Wine Repository Implementation
 │
 ├── interfaces/               # Interface Layer
 │   └── api/
@@ -94,13 +102,15 @@ python3 run.py
 - `PUT /api/v1/users/{user_id}` - Update a user
 - `DELETE /api/v1/users/{user_id}` - Delete a user
 
+### Wines (DDD Implementation)
+
+- `POST /api/v1/wines/` - Create a new wine
+- `GET /api/v1/wines/` - Get all wines (with pagination)
+- `GET /api/v1/wines/{wine_id}` - Get a specific wine
+- `PUT /api/v1/wines/{wine_id}` - Update a wine
+- `DELETE /api/v1/wines/{wine_id}` - Delete a wine
+
 ## 🧪 Testing
-
-### Test the DDD Architecture
-
-```bash
-python3 test_ddd.py
-```
 
 ### Manual Testing
 
@@ -111,23 +121,40 @@ curl -X POST "http://localhost:8000/api/v1/users/" \
      -d '{
        "email": "user@example.com",
        "username": "testuser",
+       "password": "securepassword123",
        "full_name": "Test User"
+     }'
+
+# Create a wine
+curl -X POST "http://localhost:8000/api/v1/wines/" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "name": "Château Margaux",
+       "year": 2015,
+       "grape": "Cabernet Sauvignon",
+       "country": "France",
+       "region": "Bordeaux",
+       "color": "Red",
+       "description": "A prestigious red wine"
      }'
 
 # Get all users
 curl "http://localhost:8000/api/v1/users/"
+
+# Get all wines
+curl "http://localhost:8000/api/v1/wines/"
 ```
 
 ## 🏛️ DDD Concepts Implemented
 
 ### **Domain Layer**
-- **Entities**: `User` with business methods (`activate()`, `deactivate()`)
+- **Entities**: `User`, `Wine` with business methods
 - **Value Objects**: `Email`, `Username` with validation
-- **Domain Services**: `UserService` with business rules
+- **Domain Services**: `UserService`, `WineService` with business rules
 - **Repository Interface**: Abstract contract for data access
 
 ### **Application Layer**
-- **Use Cases**: `CreateUserUseCase`, `GetUserUseCase`, etc.
+- **Use Cases**: `CreateUserUseCase`, `GetUserUseCase`, `CreateWineUseCase`, etc.
 - **DTOs**: Clean data transfer objects
 - **Application Services**: Orchestrate domain objects
 
@@ -142,10 +169,40 @@ curl "http://localhost:8000/api/v1/users/"
 
 ## 🔄 Request Flow (DDD)
 
+### **Create User Flow:**
 ```
-HTTP Request → Interface Layer → Application Layer → Domain Layer → Infrastructure Layer
-     ↓              ↓                    ↓              ↓              ↓
-API Controller → Use Case → Domain Service → Repository → Database
+HTTP POST Request → API Controller → Use Case → Domain Service → Repository → Database
+     ↓                    ↓              ↓              ↓              ↓              ↓
+JSON Payload → UserCreateRequest → CreateUserUseCase → UserService → UserRepository → SQLite
+```
+
+### **Detailed Flow:**
+1. **Interface Layer**: `users_controller.py` receives HTTP request
+   - Validates request with `UserCreateRequest` schema
+   - Creates `CreateUserDTO` from request data
+   - Calls `CreateUserUseCase`
+
+2. **Application Layer**: `CreateUserUseCase` orchestrates the operation
+   - Receives `CreateUserDTO`
+   - Calls `UserService.create_user()`
+   - Returns `UserResponse` DTO
+
+3. **Domain Layer**: `UserService` contains business logic
+   - Creates `Email` and `Username` value objects
+   - Validates business rules (unique email/username)
+   - Creates `User` domain entity
+   - Calls repository to persist
+
+4. **Infrastructure Layer**: `SQLAlchemyUserRepository` handles persistence
+   - Converts domain entity to SQLAlchemy model
+   - Saves to database
+   - Returns domain entity
+
+### **Response Flow:**
+```
+Database → Repository → Domain Service → Use Case → Controller → HTTP Response
+    ↓           ↓              ↓              ↓           ↓              ↓
+SQLite → UserModel → User Entity → UserResponse → UserResponse → JSON Response
 ```
 
 ## 🎨 Adding New Domains

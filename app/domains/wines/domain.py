@@ -5,6 +5,7 @@ from typing import Optional
 @dataclass
 class Wine:
     """Wine domain entity"""
+    id: int
     name: str
     year: int
     grape: str
@@ -12,7 +13,6 @@ class Wine:
     region: str
     color: str
     description: Optional[str] = None
-    id: Optional[int] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     
