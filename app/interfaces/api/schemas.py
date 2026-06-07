@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime
 
@@ -58,5 +58,38 @@ class WineResponse(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime]
     
+    class Config:
+        from_attributes = True
+
+
+# Auth API Schemas
+class AuthResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+
+
+# Cellar API Schemas
+class CellarEntryCreateRequest(BaseModel):
+    wine_id: int
+    quantity: int = Field(default=1, ge=1)
+    notes: Optional[str] = None
+
+
+class CellarEntryUpdateRequest(BaseModel):
+    quantity: Optional[int] = Field(default=None, ge=1)
+    notes: Optional[str] = None
+
+
+class CellarEntryResponse(BaseModel):
+    id: int
+    user_id: int
+    wine_id: int
+    quantity: int
+    notes: Optional[str]
+    created_at: datetime
+    updated_at: Optional[datetime]
+    wine: Optional[WineResponse] = None
+
     class Config:
         from_attributes = True 

@@ -1,4 +1,6 @@
 from typing import List, Optional
+
+from ...core.security import hash_password, verify_password
 from .domain import User, Email, Username, UserAlreadyExistsException, UserNotFoundException
 from .repository import UserRepository
 
@@ -25,13 +27,22 @@ class UserService:
         user = User(
             email=email_vo,
             username=username_vo,
-            password=password,
+            password=hash_password(password),
             full_name=full_name
         )
         
         # Save to repository
         return self.user_repository.create(user)
     
+    def authenticate(self, email: str, password: str) -> User:
+        """Authenticate a user by email and password"""
+        user = self.user_repository.get_by_email(Email(email))
+        if not user or not verify_password(password, user.password):
+            raise UserNotFoundException("Invalid email or password")
+        if not user.can_login():
+            raise UserNotFoundException("User account is inactive")
+        return user
+
     def get_user_by_id(self, user_id: int) -> User:
         """Get user by ID"""
         user = self.user_repository.get_by_id(user_id)
@@ -48,7 +59,8 @@ class UserService:
         user = self.get_user_by_id(user_id)
         
         if full_name is not None or password is not None:
-            user.update_profile(full_name=full_name, password=password)
+            hashed_password = hash_password(password) if password is not None else None
+            user.update_profile(full_name=full_name, password=hashed_password)
         
         if is_active is not None:
             if is_active:
