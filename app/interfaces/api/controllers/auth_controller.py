@@ -12,15 +12,17 @@ router = APIRouter()
 
 
 def _to_user_response(user) -> UserResponse:
+    email = getattr(user.email, "value", user.email)
+    username = getattr(user.username, "value", user.username)
     return UserResponse(
         id=user.id,
-        email=user.email.value,
-        username=user.username.value,
+        email=email,
+        username=username,
         full_name=user.full_name,
         is_active=user.is_active,
         created_at=user.created_at,
         updated_at=user.updated_at,
-        display_name=user.display_name,
+        display_name=getattr(user, "display_name", user.full_name or username),
     )
 
 
