@@ -47,18 +47,20 @@ class SQLAlchemyPairingRepository(PairingRepository):
         )
         return [self._to_domain(pairing) for pairing in db_pairings]
 
-    def search_by_food(self, user_id: int, food: str, skip: int = 0, limit: int = 100) -> List[Pairing]:
+    def search_by_food(self, user_id: int, food: str, skip: int = 0, limit: Optional[int] = 100) -> List[Pairing]:
         pattern = f"%{food.strip().lower()}%"
-        db_pairings = (
+        query = (
             self.db.query(PairingModel)
             .options(joinedload(PairingModel.wine))
             .filter(PairingModel.user_id == user_id)
             .filter(func.lower(PairingModel.food).like(pattern))
             .order_by(PairingModel.created_at.desc())
             .offset(skip)
-            .limit(limit)
-            .all()
         )
+        if limit is not None:
+            query = query.limit(limit)
+
+        db_pairings = query.all()
         return [self._to_domain(pairing) for pairing in db_pairings]
 
     def update(self, pairing: Pairing) -> Pairing:

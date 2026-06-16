@@ -49,3 +49,14 @@ class Pairing:
 
 class PairingNotFoundException(Exception):
     pass
+
+
+@dataclass
+class WineMeMatch:
+    wine: "Wine"
+    match_count: int
+    average_effectiveness: float
+    latest_pairing_at: datetime
+    latest_food: str
+    latest_effectiveness: int
+    latest_notes: Optional[str] = None

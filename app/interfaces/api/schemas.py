@@ -148,3 +148,16 @@ class PairingResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class WineMeMatchResponse(BaseModel):
+    wine: WineResponse
+    match_count: int
+    average_effectiveness: float
+    latest_pairing_at: datetime
+    latest_food: str
+    latest_effectiveness: int
+    latest_notes: Optional[str] = None
+
+    class Config:
+        from_attributes = True

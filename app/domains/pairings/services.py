@@ -1,7 +1,7 @@
 from typing import List, Optional
 
+from .domain import Pairing, PairingNotFoundException, WineMeMatch
 from ..wines.services import WineService
-from .domain import Pairing, PairingNotFoundException
 from .repository import PairingRepository
 
 
@@ -41,6 +41,59 @@ class PairingService:
         self, user_id: int, food: str, skip: int = 0, limit: int = 100
     ) -> List[Pairing]:
         return self.pairing_repository.search_by_food(user_id, food, skip=skip, limit=limit)
+
+    def search_wine_me(
+        self, user_id: int, food: str, skip: int = 0, limit: int = 100
+    ) -> List[WineMeMatch]:
+        pairings = self.search_pairings_by_food(user_id, food, skip=0, limit=None)
+        grouped = {}
+
+        for pairing in pairings:
+            bucket = grouped.setdefault(
+                pairing.wine_id,
+                {
+                    "wine": pairing.wine,
+                    "count": 0,
+                    "effectiveness_sum": 0,
+                    "latest_pairing_at": pairing.created_at,
+                    "latest_food": pairing.food,
+                    "latest_effectiveness": pairing.effectiveness,
+                    "latest_notes": pairing.notes,
+                },
+            )
+
+            bucket["count"] += 1
+            bucket["effectiveness_sum"] += pairing.effectiveness
+
+            if pairing.created_at and pairing.created_at > bucket["latest_pairing_at"]:
+                bucket["latest_pairing_at"] = pairing.created_at
+                bucket["latest_food"] = pairing.food
+                bucket["latest_effectiveness"] = pairing.effectiveness
+                bucket["latest_notes"] = pairing.notes
+
+        results = [
+            WineMeMatch(
+                wine=data["wine"],
+                match_count=data["count"],
+                average_effectiveness=round(data["effectiveness_sum"] / data["count"], 2),
+                latest_pairing_at=data["latest_pairing_at"],
+                latest_food=data["latest_food"],
+                latest_effectiveness=data["latest_effectiveness"],
+                latest_notes=data["latest_notes"],
+            )
+            for data in grouped.values()
+            if data["wine"] is not None
+        ]
+
+        results.sort(
+            key=lambda item: (
+                item.average_effectiveness,
+                item.latest_pairing_at,
+                item.match_count,
+            ),
+            reverse=True,
+        )
+        return results[skip: skip + limit]
 
     def update_pairing(
         self,

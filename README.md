@@ -31,6 +31,9 @@ app/
 │   ├── users/
 │   │   ├── dto.py            # Data Transfer Objects
 │   │   └── use_cases.py      # Use Cases
+│   ├── wine_me/
+│   │   ├── dto.py            # Wine Me dashboard DTOs
+│   │   └── use_cases.py      # Wine Me search use cases
 │   ├── tastings/
 │   │   ├── dto.py            # Tasting DTOs
 │   │   └── use_cases.py      # Tasting use cases
@@ -128,7 +131,11 @@ python3 run.py
 - `GET /api/v1/pairings/{pairing_id}` - Get one pairing
 - `PUT /api/v1/pairings/{pairing_id}` - Update a pairing
 - `DELETE /api/v1/pairings/{pairing_id}` - Remove a pairing
-- `GET /api/v1/wine-me?food=ribeye` - Search your pairing history by food
+
+### Phase 3
+
+- `GET /api/v1/wine-me?food=ribeye` - Return ranked wines from your pairing history
+- Ranking uses your average pairing effectiveness, recency, and frequency
 
 ## 🧪 Testing
 

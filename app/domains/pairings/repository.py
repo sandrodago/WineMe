@@ -18,7 +18,7 @@ class PairingRepository(ABC):
         pass
 
     @abstractmethod
-    def search_by_food(self, user_id: int, food: str, skip: int = 0, limit: int = 100) -> List[Pairing]:
+    def search_by_food(self, user_id: int, food: str, skip: int = 0, limit: Optional[int] = 100) -> List[Pairing]:
         pass
 
     @abstractmethod
@@ -28,4 +28,3 @@ class PairingRepository(ABC):
     @abstractmethod
     def delete(self, pairing_id: int) -> bool:
         pass
-
