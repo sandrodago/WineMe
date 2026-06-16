@@ -43,9 +43,13 @@ class PairingService:
         return self.pairing_repository.search_by_food(user_id, food, skip=skip, limit=limit)
 
     def search_wine_me(
-        self, user_id: int, food: str, skip: int = 0, limit: int = 100
+        self, user_id: int, food: str, friend_ids: Optional[List[int]] = None, skip: int = 0, limit: int = 100
     ) -> List[WineMeMatch]:
-        pairings = self.search_pairings_by_food(user_id, food, skip=0, limit=None)
+        user_ids = [user_id]
+        if friend_ids:
+            user_ids.extend(friend_ids)
+
+        pairings = self.pairing_repository.search_by_food_for_users(user_ids, food, skip=0, limit=None)
         grouped = {}
 
         for pairing in pairings:

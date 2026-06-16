@@ -22,6 +22,10 @@ app/
 │   │   ├── domain.py          # Entities, Value Objects, Domain Logic
 │   │   ├── repository.py      # Repository Interface
 │   │   └── services.py        # Domain Services
+│   ├── social/                # Social graph domain
+│   │   ├── domain.py          # Connection entity
+│   │   ├── repository.py      # Repository Interface
+│   │   └── services.py        # Social services
 │   └── wines/                 # Wines Domain
 │       ├── domain.py          # Wine Entity
 │       ├── repository.py      # Repository Interface
@@ -136,6 +140,16 @@ python3 run.py
 
 - `GET /api/v1/wine-me?food=ribeye` - Return ranked wines from your pairing history
 - Ranking uses your average pairing effectiveness, recency, and frequency
+
+### Phase 4
+
+- `POST /api/v1/social/requests` - Send a friend request
+- `GET /api/v1/social/requests/incoming` - List incoming requests
+- `GET /api/v1/social/requests/outgoing` - List outgoing requests
+- `POST /api/v1/social/requests/{connection_id}/accept` - Accept a request
+- `POST /api/v1/social/requests/{connection_id}/reject` - Reject a request
+- `DELETE /api/v1/social/connections/{connection_id}` - Remove a connection
+- `GET /api/v1/wine-me?food=ribeye` - Search your pairings plus accepted friends
 
 ## 🧪 Testing
 

@@ -49,10 +49,16 @@ class SQLAlchemyPairingRepository(PairingRepository):
 
     def search_by_food(self, user_id: int, food: str, skip: int = 0, limit: Optional[int] = 100) -> List[Pairing]:
         pattern = f"%{food.strip().lower()}%"
+        return self.search_by_food_for_users([user_id], food, skip=skip, limit=limit)
+
+    def search_by_food_for_users(
+        self, user_ids: List[int], food: str, skip: int = 0, limit: Optional[int] = 100
+    ) -> List[Pairing]:
+        pattern = f"%{food.strip().lower()}%"
         query = (
             self.db.query(PairingModel)
             .options(joinedload(PairingModel.wine))
-            .filter(PairingModel.user_id == user_id)
+            .filter(PairingModel.user_id.in_(user_ids))
             .filter(func.lower(PairingModel.food).like(pattern))
             .order_by(PairingModel.created_at.desc())
             .offset(skip)

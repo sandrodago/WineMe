@@ -161,3 +161,20 @@ class WineMeMatchResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# Social API Schemas
+class SocialConnectionCreateRequest(BaseModel):
+    addressee_id: int
+
+
+class SocialConnectionResponse(BaseModel):
+    id: int
+    requester_id: int
+    addressee_id: int
+    status: str
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+    class Config:
+        from_attributes = True

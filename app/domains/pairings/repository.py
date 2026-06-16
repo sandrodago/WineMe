@@ -22,6 +22,12 @@ class PairingRepository(ABC):
         pass
 
     @abstractmethod
+    def search_by_food_for_users(
+        self, user_ids: List[int], food: str, skip: int = 0, limit: Optional[int] = 100
+    ) -> List[Pairing]:
+        pass
+
+    @abstractmethod
     def update(self, pairing: Pairing) -> Pairing:
         pass
 

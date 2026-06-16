@@ -17,6 +17,8 @@ class UserModel(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    sent_connection_requests = relationship("SocialConnectionModel", foreign_keys="SocialConnectionModel.requester_id", back_populates="requester")
+    received_connection_requests = relationship("SocialConnectionModel", foreign_keys="SocialConnectionModel.addressee_id", back_populates="addressee")
 
 class WineModel(Base):
     """SQLAlchemy model for Wine - Infrastructure concern"""
@@ -86,3 +88,19 @@ class PairingModel(Base):
 
     user = relationship("UserModel", backref="pairings")
     wine = relationship("WineModel", back_populates="pairings")
+
+
+class SocialConnectionModel(Base):
+    """Friend request / connection between two users"""
+    __tablename__ = "social_connections"
+    __table_args__ = (UniqueConstraint("requester_id", "addressee_id", name="uq_social_connection_pair"),)
+
+    id = Column(Integer, primary_key=True, index=True)
+    requester_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    addressee_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    status = Column(String, nullable=False, default="pending")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    requester = relationship("UserModel", foreign_keys=[requester_id], back_populates="sent_connection_requests")
+    addressee = relationship("UserModel", foreign_keys=[addressee_id], back_populates="received_connection_requests")
