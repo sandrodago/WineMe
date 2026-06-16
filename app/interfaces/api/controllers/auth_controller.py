@@ -11,6 +11,19 @@ from ..schemas import AuthResponse, UserCreateRequest, UserResponse
 router = APIRouter()
 
 
+def _to_user_response(user) -> UserResponse:
+    return UserResponse(
+        id=user.id,
+        email=user.email.value,
+        username=user.username.value,
+        full_name=user.full_name,
+        is_active=user.is_active,
+        created_at=user.created_at,
+        updated_at=user.updated_at,
+        display_name=user.display_name,
+    )
+
+
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 def register(
     user_request: UserCreateRequest,
@@ -25,7 +38,7 @@ def register(
             full_name=user_request.full_name,
         )
         user, token = use_case.execute(dto)
-        return AuthResponse(access_token=token, user=UserResponse(**user.__dict__))
+        return AuthResponse(access_token=token, user=_to_user_response(user))
     except UserAlreadyExistsException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
@@ -38,7 +51,7 @@ def login(
     try:
         use_case = LoginUseCase(user_service)
         user, token = use_case.execute(form_data.username, form_data.password)
-        return AuthResponse(access_token=token, user=UserResponse(**user.__dict__))
+        return AuthResponse(access_token=token, user=_to_user_response(user))
     except UserNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

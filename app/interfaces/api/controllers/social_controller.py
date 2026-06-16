@@ -15,6 +15,7 @@ from ....core.auth import get_current_user
 from ....domains.social.domain import SocialConnectionNotFoundException
 from ....domains.social.services import SocialService
 from ....domains.users.domain import User
+from ....core.auth import get_user_service
 from ....infrastructure.database.connection import get_db
 from ....infrastructure.repositories.social_repository import SQLAlchemySocialConnectionRepository
 from ..schemas import SocialConnectionCreateRequest, SocialConnectionResponse
@@ -35,9 +36,11 @@ def _to_schema(response) -> SocialConnectionResponse:
 def send_request(
     request: SocialConnectionCreateRequest,
     current_user: User = Depends(get_current_user),
+    user_service=Depends(get_user_service),
     social_service: SocialService = Depends(get_social_service),
 ):
     try:
+        user_service.get_user_by_id(request.addressee_id)
         use_case = SendConnectionRequestUseCase(social_service)
         result = use_case.execute(current_user.id, SendConnectionRequest(addressee_id=request.addressee_id))
         return _to_schema(result)
@@ -101,4 +104,3 @@ def delete_connection(
         return None
     except SocialConnectionNotFoundException as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-
