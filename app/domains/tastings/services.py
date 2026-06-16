@@ -30,6 +30,9 @@ class TastingService:
     def get_tastings(self, user_id: int, skip: int = 0, limit: int = 100) -> List[Tasting]:
         return self.tasting_repository.get_by_user(user_id, skip=skip, limit=limit)
 
+    def get_tastings_for_wines(self, user_id: int, wine_ids: List[int]) -> List[Tasting]:
+        return self.tasting_repository.get_by_user_and_wines(user_id, wine_ids)
+
     def update_tasting(
         self,
         user_id: int,
@@ -44,4 +47,3 @@ class TastingService:
     def remove_tasting(self, user_id: int, tasting_id: int) -> bool:
         self.get_tasting(user_id, tasting_id)
         return self.tasting_repository.delete(tasting_id)
-

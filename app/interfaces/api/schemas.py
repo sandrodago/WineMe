@@ -157,7 +157,11 @@ class WineMeMatchResponse(BaseModel):
     latest_pairing_at: datetime
     latest_food: str
     latest_effectiveness: int
+    average_tasting_rating: Optional[float] = None
+    latest_tasting_at: Optional[datetime] = None
+    latest_tasting_rating: Optional[int] = None
     latest_notes: Optional[str] = None
+    score: Optional[float] = None
 
     class Config:
         from_attributes = True

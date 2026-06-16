@@ -45,6 +45,20 @@ class SQLAlchemyTastingRepository(TastingRepository):
         )
         return [self._to_domain(tasting) for tasting in db_tastings]
 
+    def get_by_user_and_wines(self, user_id: int, wine_ids: List[int]) -> List[Tasting]:
+        if not wine_ids:
+            return []
+
+        db_tastings = (
+            self.db.query(TastingModel)
+            .options(joinedload(TastingModel.wine))
+            .filter(TastingModel.user_id == user_id)
+            .filter(TastingModel.wine_id.in_(wine_ids))
+            .order_by(TastingModel.created_at.desc())
+            .all()
+        )
+        return [self._to_domain(tasting) for tasting in db_tastings]
+
     def update(self, tasting: Tasting) -> Tasting:
         db_tasting = self.db.query(TastingModel).filter(TastingModel.id == tasting.id).first()
         if not db_tasting:
@@ -91,4 +105,3 @@ class SQLAlchemyTastingRepository(TastingRepository):
             updated_at=db_tasting.updated_at,
             wine=wine,
         )
-

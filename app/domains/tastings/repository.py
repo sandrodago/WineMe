@@ -18,10 +18,13 @@ class TastingRepository(ABC):
         pass
 
     @abstractmethod
+    def get_by_user_and_wines(self, user_id: int, wine_ids: List[int]) -> List[Tasting]:
+        pass
+
+    @abstractmethod
     def update(self, tasting: Tasting) -> Tasting:
         pass
 
     @abstractmethod
     def delete(self, tasting_id: int) -> bool:
         pass
-
