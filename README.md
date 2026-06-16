@@ -31,6 +31,12 @@ app/
 │   ├── users/
 │   │   ├── dto.py            # Data Transfer Objects
 │   │   └── use_cases.py      # Use Cases
+│   ├── tastings/
+│   │   ├── dto.py            # Tasting DTOs
+│   │   └── use_cases.py      # Tasting use cases
+│   ├── pairings/
+│   │   ├── dto.py            # Pairing DTOs
+│   │   └── use_cases.py      # Pairing use cases
 │   └── wines/
 │       ├── dto.py            # Wine DTOs
 │       └── use_cases.py      # Wine Use Cases
@@ -109,6 +115,20 @@ python3 run.py
 - `GET /api/v1/wines/{wine_id}` - Get a specific wine
 - `PUT /api/v1/wines/{wine_id}` - Update a wine
 - `DELETE /api/v1/wines/{wine_id}` - Delete a wine
+
+### Phase 2
+
+- `POST /api/v1/tastings/` - Add a tasting rating and notes for a wine
+- `GET /api/v1/tastings/` - Get your tasting history
+- `GET /api/v1/tastings/{tasting_id}` - Get one tasting
+- `PUT /api/v1/tastings/{tasting_id}` - Update a tasting
+- `DELETE /api/v1/tastings/{tasting_id}` - Remove a tasting
+- `POST /api/v1/pairings/` - Log a wine and food pairing, plus how well it worked
+- `GET /api/v1/pairings/` - Get your pairing history
+- `GET /api/v1/pairings/{pairing_id}` - Get one pairing
+- `PUT /api/v1/pairings/{pairing_id}` - Update a pairing
+- `DELETE /api/v1/pairings/{pairing_id}` - Remove a pairing
+- `GET /api/v1/wine-me?food=ribeye` - Search your pairing history by food
 
 ## 🧪 Testing
 

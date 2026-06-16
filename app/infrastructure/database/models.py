@@ -34,6 +34,8 @@ class WineModel(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     cellar_entries = relationship("CellarEntryModel", back_populates="wine")
+    tastings = relationship("TastingModel", back_populates="wine")
+    pairings = relationship("PairingModel", back_populates="wine")
 
 
 class CellarEntryModel(Base):
@@ -51,3 +53,36 @@ class CellarEntryModel(Base):
 
     user = relationship("UserModel", backref="cellar_entries")
     wine = relationship("WineModel", back_populates="cellar_entries")
+
+
+class TastingModel(Base):
+    """A user's tasting note and rating for a wine"""
+    __tablename__ = "tastings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    wine_id = Column(Integer, ForeignKey("wines.id"), nullable=False, index=True)
+    rating = Column(Integer, nullable=False)
+    notes = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    user = relationship("UserModel", backref="tastings")
+    wine = relationship("WineModel", back_populates="tastings")
+
+
+class PairingModel(Base):
+    """A user's food and wine pairing note"""
+    __tablename__ = "pairings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    wine_id = Column(Integer, ForeignKey("wines.id"), nullable=False, index=True)
+    food = Column(String, nullable=False, index=True)
+    effectiveness = Column(Integer, nullable=False, default=3)
+    notes = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    user = relationship("UserModel", backref="pairings")
+    wine = relationship("WineModel", back_populates="pairings")

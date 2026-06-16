@@ -92,4 +92,59 @@ class CellarEntryResponse(BaseModel):
     wine: Optional[WineResponse] = None
 
     class Config:
-        from_attributes = True 
+        from_attributes = True
+
+
+# Tasting API Schemas
+class TastingCreateRequest(BaseModel):
+    wine_id: int
+    rating: int = Field(ge=1, le=5)
+    notes: Optional[str] = None
+
+
+class TastingUpdateRequest(BaseModel):
+    rating: Optional[int] = Field(default=None, ge=1, le=5)
+    notes: Optional[str] = None
+
+
+class TastingResponse(BaseModel):
+    id: int
+    user_id: int
+    wine_id: int
+    rating: int
+    notes: Optional[str]
+    created_at: datetime
+    updated_at: Optional[datetime]
+    wine: Optional[WineResponse] = None
+
+    class Config:
+        from_attributes = True
+
+
+# Pairing API Schemas
+class PairingCreateRequest(BaseModel):
+    wine_id: int
+    food: str
+    effectiveness: int = Field(default=3, ge=1, le=5)
+    notes: Optional[str] = None
+
+
+class PairingUpdateRequest(BaseModel):
+    food: Optional[str] = None
+    effectiveness: Optional[int] = Field(default=None, ge=1, le=5)
+    notes: Optional[str] = None
+
+
+class PairingResponse(BaseModel):
+    id: int
+    user_id: int
+    wine_id: int
+    food: str
+    effectiveness: int
+    notes: Optional[str]
+    created_at: datetime
+    updated_at: Optional[datetime]
+    wine: Optional[WineResponse] = None
+
+    class Config:
+        from_attributes = True
